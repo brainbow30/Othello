@@ -2,9 +2,11 @@ package application.game;
 
 import application.ImmutablePosition;
 import application.Position;
+import application.game.verifiers.Verifier;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,55 +27,27 @@ public class Board implements Serializable {
     private final Double evaluationStableDiscValue;
 
     @Autowired
-    public Board(@Value("${board.size}") Integer boardSize, Verifier verifier,
+    public Board(@Value("${board.size}") Integer boardSize, @Qualifier("othello") Verifier verifier,
                  @Value("${evaluationValue.discNum}") Double evaluationDiscValue,
                  @Value("${evaluationValue.mobility}") Double evaluationMobilityValue,
                  @Value("${evaluationValue.stableNum}") Double evaluationStableDiscValue) {
         this.boardSize = boardSize;
-        this.board = setupBoard();
         this.verifier = verifier;
         this.evaluationStableDiscValue = evaluationStableDiscValue;
         this.evaluationMobilityValue = evaluationMobilityValue;
         this.evaluationDiscValue = evaluationDiscValue;
+        setup();
+    }
+
+    private void setup() {
+        board = verifier.setupBoard(boardSize);
+        int[] stats = verifier.setupStats(boardSize);
+        countersPlayed = stats[0];
+        numberOfWhiteCounters = stats[1];
     }
 
     public void reset() {
-        this.board = setupBoard();
-    }
-
-    private ImmutableList<ImmutableList<Optional<Counter>>> setupBoard() {
-        ImmutableList.Builder<ImmutableList<Optional<Counter>>> boardBuilder = ImmutableList.builder();
-
-        //create initial counter set up in centre of board
-        for (int y = 0; y < boardSize; y++) {
-            ImmutableList.Builder<Optional<Counter>> rowBuilder = ImmutableList.builder();
-            for (int x = 0; x < boardSize; x++) {
-
-                if (y == (boardSize / 2) - 1) {
-                    if (x == (boardSize / 2) - 1) {
-                        rowBuilder.add(Optional.of(new Counter(COLOUR.WHITE)));
-                    } else if (x == (boardSize / 2)) {
-                        rowBuilder.add(Optional.of(new Counter(COLOUR.BLACK)));
-                    } else {
-                        rowBuilder.add(Optional.absent());
-                    }
-                } else if (y == (boardSize / 2)) {
-                    if (x == (boardSize / 2) - 1) {
-                        rowBuilder.add(Optional.of(new Counter(COLOUR.BLACK)));
-                    } else if (x == (boardSize / 2)) {
-                        rowBuilder.add(Optional.of(new Counter(COLOUR.WHITE)));
-                    } else {
-                        rowBuilder.add(Optional.absent());
-                    }
-                } else {
-                    rowBuilder.add(Optional.absent());
-                }
-            }
-            boardBuilder.add(rowBuilder.build());
-        }
-        countersPlayed = 4;
-        numberOfWhiteCounters = 2;
-        return boardBuilder.build();
+        setup();
     }
 
 
@@ -83,6 +57,10 @@ public class Board implements Serializable {
 
     public Integer getCountersPlayed() {
         return countersPlayed;
+    }
+
+    public Integer getNumberOfWhiteCounters() {
+        return numberOfWhiteCounters;
     }
 
     public Optional<Counter> getCounter(Position position) {
@@ -104,7 +82,6 @@ public class Board implements Serializable {
     public Boolean addCounter(Counter newCounter, Position position) {
         try {
             if (verifier.validMove(this, newCounter.getColour(), position)) {
-                //System.out.println("valid move");
                 //flip counter
                 //horizontal flips
                 flipCounters(newCounter.getColour(), position, 1, 0);
@@ -159,7 +136,6 @@ public class Board implements Serializable {
 
 
     public String printBoard() {
-        //System.out.println("numberOfWhiteCounters = " + numberOfWhiteCounters);
         StringBuilder boardString = new StringBuilder("\n  ");
         for (int x = 0; x < boardSize; x++) {
             boardString.append(" ").append(x + 1);
@@ -320,7 +296,7 @@ public class Board implements Serializable {
     }
 
 
-    public COLOUR getWinner(Boolean printScore) {
+    public Optional<COLOUR> getWinner(Boolean printScore) {
         int whiteCounters = 0;
         for (ImmutableList<Optional<Counter>> row : board) {
             for (Optional<Counter> counter : row) {
@@ -331,15 +307,15 @@ public class Board implements Serializable {
             }
         }
         if (printScore) {
-            System.out.println("Score: " + whiteCounters + ":" + (int) (Math.pow(boardSize, 2) - whiteCounters));
+            System.out.println("Score: " + whiteCounters + ":" + (countersPlayed - whiteCounters));
         }
-        double halfTotalCounters = Math.ceil(Math.pow(boardSize, 2) / 2.0);
+        double halfTotalCounters = countersPlayed / 2.0;
         if (whiteCounters > halfTotalCounters) {
-            return COLOUR.WHITE;
+            return Optional.of(COLOUR.WHITE);
         } else if (whiteCounters < halfTotalCounters) {
-            return COLOUR.BLACK;
+            return Optional.of(COLOUR.BLACK);
         } else {
-            return null;
+            return Optional.absent();
         }
     }
 
@@ -369,12 +345,31 @@ public class Board implements Serializable {
     public boolean equals(Object object) {
         try {
             Board board = (Board) object;
-            return board.printBoard().equals(this.printBoard());
-        } catch (Exception e) {
+            return board.printBoard().equals(printBoard());
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return false;
         }
 
+    }
+
+    public ImmutableList<Integer> asIntArray() {
+        ImmutableList.Builder<Integer> builder = ImmutableList.builder();
+        for (ImmutableList<Optional<Counter>> row : board) {
+            for (Optional<Counter> counterOptional : row) {
+                if (counterOptional.isPresent()) {
+                    Counter counter = counterOptional.get();
+                    if (counter.getColour().equals(COLOUR.WHITE)) {
+                        builder.add(1);
+                    } else {
+                        builder.add(-1);
+                    }
+                } else {
+                    builder.add(0);
+                }
+            }
+        }
+        return builder.build();
     }
 
 }
