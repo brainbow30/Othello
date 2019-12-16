@@ -30,6 +30,7 @@ public final class TreeNode implements Serializable {
     private final ImmutablePosition positionToCreateBoard;
     private Boolean isRoot = false;
     private final String hostname;
+    private ImmutableList<Double> policy;
 
 
     private TreeNode(Builder builder) {
@@ -80,6 +81,21 @@ public final class TreeNode implements Serializable {
         return builder.build();
     }
 
+    private static Double getWinnerValue(COLOUR rootColour, Optional<COLOUR> actualColour) {
+        if (actualColour.isPresent()) {
+            //win
+            if (rootColour.equals(actualColour.get())) {
+                return 1.0;
+                //loss
+            } else {
+                return -1.0;
+            }
+            //draw
+        } else {
+            return -1.0;
+        }
+    }
+
 
     public COLOUR getColour() {
         return colour;
@@ -101,16 +117,26 @@ public final class TreeNode implements Serializable {
         return parent;
     }
 
-    public static Double getWinnerValue(COLOUR rootColour, Optional<COLOUR> actualColour) {
-        if (actualColour.isPresent()) {
-            if (rootColour.equals(actualColour.get())) {
-                return 1.0;
-            } else {
-                return 0.0;
+    ImmutableList<Double> getTrainingPolicy() {
+        ImmutableList.Builder<Double> builder = ImmutableList.builder();
+        for (int y = 0; y < currentBoard.getBoardSize(); y++) {
+            for (int x = 0; x < currentBoard.getBoardSize(); x++) {
+                ImmutablePosition position = ImmutablePosition.builder().x(x).y(y).build();
+                Boolean contains = false;
+                for (TreeNode child : getChildren()) {
+                    if (child.getPositionToCreateBoard().equals(position) && child.getNumberOfSimulations() > 0) {
+                        //todo find good policy values
+                        builder.add((child.getNumberOfSimulations() / getNumberOfSimulations()));
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains) {
+                    builder.add(0.0);
+                }
             }
-        } else {
-            return 0.0;
         }
+        return builder.build();
     }
 
     Double getNumberOfSimulations() {
@@ -148,25 +174,47 @@ public final class TreeNode implements Serializable {
     public TreeNode selectUCTMove() {
         Random random = new Random();
         ImmutableList<TreeNode> children = getChildren();
+        if (children.size() > 0) {
+            double bestValue = Double.MIN_VALUE;
+            TreeNode selected = children.get(random.nextInt(children.size()));
+            for (TreeNode child : children) {
+                double epsilon = 1e-6;
+                double uctValue = child.numberOfWins / (child.numberOfSimulations + epsilon) +
+                        Math.sqrt(Math.log(numberOfSimulations + 1) / (child.numberOfSimulations + epsilon)) +
+                        random.nextDouble() * epsilon;
+                if (uctValue > bestValue) {
+                    selected = child;
+                    bestValue = uctValue;
+                }
+            }
+            return selected;
+        } else {
+            return this;
+        }
+    }
+
+    public TreeNode selectAlphaZeroMove(Double cpuct, Boolean test) {
+        Random random = new Random();
+        ImmutableList<TreeNode> children = getChildren();
         double bestValue = Double.MIN_VALUE;
         TreeNode selected = children.get(random.nextInt(children.size()));
         for (TreeNode child : children) {
-            double epsilon = 1e-6;
-            double uctValue = child.numberOfWins / (child.numberOfSimulations + epsilon) +
-                    Math.sqrt(Math.log(numberOfSimulations + 1) / (child.numberOfSimulations + epsilon)) +
-                    random.nextDouble() * epsilon;
+            ImmutablePosition position = child.positionToCreateBoard;
+            int integerPosition = position.x() + position.y() * currentBoard.getBoardSize();
+            if (policy == null) {
+                getNNPrediction(test);
+            }
+            double uctValue = child.numberOfWins + (cpuct * policy.get(integerPosition)
+                    * (Math.sqrt(numberOfSimulations) / (1 + child.numberOfSimulations)));
             if (uctValue > bestValue) {
                 selected = child;
                 bestValue = uctValue;
             }
         }
-        if (selected == null) {
-            return this;
-        }
         return selected;
     }
 
-    double getNNPrediction() {
+    double getNNPrediction(Boolean test) {
         ClientConfig config = new ClientConfig();
         Client client = ClientBuilder.newClient(config);
 
@@ -182,13 +230,27 @@ public final class TreeNode implements Serializable {
             }
         }
         // Get JSON for application
-        String jsonResponse = target.path("predict")
+        String path;
+        if (test) {
+            path = "testpredict";
+        } else {
+            path = "predict";
+        }
+        String jsonResponse = target.path(path)
                 .path(currentBoard.getBoardSize().toString())
                 .path(stringBoard.toString()).request()
                 .accept(MediaType.APPLICATION_JSON).get(String.class);
-
         try {
-            return Double.parseDouble(jsonResponse);
+            String[] response = jsonResponse.split(":");
+            Double v = Double.parseDouble(response[1]);
+            String[] stringPolicy = response[0].split(",");
+            ImmutableList.Builder<Double> builder = ImmutableList.builder();
+            for (String i : stringPolicy
+            ) {
+                builder.add(Double.parseDouble(i));
+            }
+            policy = builder.build();
+            return v;
         } catch (NumberFormatException e) {
             System.out.println("error");
             System.out.println("jsonResponse = " + jsonResponse);
@@ -228,21 +290,22 @@ public final class TreeNode implements Serializable {
         }
     }
 
-    Double simulateGame(Boolean useNN) {
-        if (useNN) {
-            double nnPrediction = getNNPrediction();
-            addResult(nnPrediction);
-            return nnPrediction;
+    Double simulateGame(Integer nnFunction) {
+        Double result;
+        if (isTerminalNode()) {
+            result = getWinnerValue(rootColour, currentBoard.getWinner(false));
         } else {
-            Double result;
-            if (isTerminalNode()) {
-                result = getWinnerValue(rootColour, currentBoard.getWinner(false));
+            if (nnFunction.equals(1)) {
+                result = getNNPrediction(false);
+            } else if (nnFunction.equals(2)) {
+                result = getNNPrediction(true);
             } else {
-                result = selectRandomMove().simulateGame(false);
+                result = selectUCTMove().simulateGame(0);
             }
-            addResult(result);
-            return result;
+
         }
+        addResult(result);
+        return result;
     }
 
     Board getCurrentBoard() {
@@ -361,11 +424,11 @@ public final class TreeNode implements Serializable {
         return rotateBoard(unrotatedBoard);
     }
 
-    ImmutableList<Integer> rotateBoard(ImmutableList<Integer> intArray) {
-        ImmutableList.Builder<Integer> builder = ImmutableList.builder();
+    ImmutableList rotateBoard(ImmutableList intArray) {
+        ImmutableList.Builder builder = ImmutableList.builder();
         for (int y = 0; y < currentBoard.getBoardSize(); y++) {
             for (int x = currentBoard.getBoardSize() - 1; x >= 0; x--) {
-                Integer value = intArray.get(x * currentBoard.getBoardSize() + y);
+                Object value = intArray.get(x * currentBoard.getBoardSize() + y);
                 builder.add(value);
             }
         }
