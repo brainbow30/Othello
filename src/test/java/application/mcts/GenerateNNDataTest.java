@@ -14,14 +14,14 @@ import java.io.*;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GenerateTrainingDataTest {
+public class GenerateNNDataTest {
     private Board board;
     private TreeNode treeNode;
 
-    private GenerateTrainingData generateTrainingData;
+    private GenerateNNData generateNNData;
     @Before
     public void setup() {
-        generateTrainingData = new GenerateTrainingData("testWrite.txt");
+        generateNNData = new GenerateNNData("testWrite.txt");
         board = new Board(4, new OthelloVerifier(), 0.0, 0.0, 0.0);
         treeNode = TreeNode.builder().colour(COLOUR.WHITE).currentBoard(board).positionToCreateBoard(null).parent(null).rootColour(COLOUR.WHITE).hostname("127.0.0.1:5000").build();
     }
@@ -32,7 +32,7 @@ public class GenerateTrainingDataTest {
         try {
             ImmutableList.Builder<Double> builder = ImmutableList.builder();
             builder.add(0.0);
-            generateTrainingData.write(board.asIntArray(), builder.build(), 1);
+            generateNNData.write(board.asIntArray(), builder.build(), 1);
             String expected = "[[0,0,0,0,0,1,-1,0,0,-1,1,0,0,0,0,0],[0.0],1]";
             assertEquals(expected, readFile().get(0));
         } catch (FileNotFoundException e) {
@@ -44,9 +44,9 @@ public class GenerateTrainingDataTest {
 
     @Test
     public void save() {
-        generateTrainingData.open();
-        generateTrainingData.save(treeNode);
-        generateTrainingData.close();
+        generateNNData.open();
+        generateNNData.save(treeNode);
+        generateNNData.close();
     }
 
     private ImmutableList<String> readFile() throws IOException {
