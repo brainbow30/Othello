@@ -66,7 +66,7 @@ public class MonteCarloTreeSearch {
                     return true;
                 });
 
-                f.get(waitTime - stopwatch.elapsed(TimeUnit.MILLISECONDS), TimeUnit.SECONDS);
+                f.get(waitTime - stopwatch.elapsed(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS);
             } catch (final TimeoutException e) {
                 System.err.println("Interupt");
             } catch (final Exception e) {
