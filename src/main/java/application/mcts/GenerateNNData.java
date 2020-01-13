@@ -118,7 +118,11 @@ public class GenerateNNData {
 
             terminalNode = terminalNode.getParent();
         }
-        builder.deleteCharAt(builder.length() - 1);
+        ImmutableList<Integer> intBoard = canonicalBoard(terminalNode);
+        ImmutableList<Integer> oppIntBoard = changeBoardPerspective(intBoard, boardSize);
+        write(intBoard, terminalNode.getTrainingPolicy(), result);
+        builder.append(",");
+        write(oppIntBoard, rotateBoard(terminalNode.getTrainingPolicy(), boardSize), oppResult);
         builder.append("]");
         try {
             outputWriter.write(builder.toString());

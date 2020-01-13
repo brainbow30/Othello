@@ -92,7 +92,7 @@ public class ComputerPlayer implements Player {
         MonteCarloTreeSearch monteCarloTreeSearch;
         TreeNode currentNode;
         //todo find replacement for previous node
-        if (previousNode != null && !previousNode.isTerminalNode()) {
+        if (previousNode != null) {
 
             currentNode = previousNode.findChildBoardMatch(board);
             monteCarloTreeSearch = new MonteCarloTreeSearch(currentNode.clone(), waitTime, nnFunction, cpuct);
