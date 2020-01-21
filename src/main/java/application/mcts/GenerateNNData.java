@@ -110,19 +110,20 @@ public class GenerateNNData {
         Integer boardSize = terminalNode.getCurrentBoard().getBoardSize();
         while (terminalNode.getParent() != null) {
             ImmutableList<Integer> intBoard = canonicalBoard(terminalNode);
-            ImmutableList<Integer> oppIntBoard = changeBoardPerspective(intBoard, boardSize);
-            write(intBoard, terminalNode.getTrainingPolicy(result), result);
-            builder.append(",");
-            write(oppIntBoard, rotateBoard(terminalNode.getTrainingPolicy(oppResult), boardSize), oppResult);
-            builder.append(",");
+            if (terminalNode.getColour().equals(terminalNode.getRootColour())) {
+                write(intBoard, terminalNode.getTrainingPolicy(result), result);
+                builder.append(",");
+            } else {
+                ImmutableList<Integer> oppIntBoard = changeBoardPerspective(intBoard, boardSize);
+                write(oppIntBoard, rotateBoard(terminalNode.getTrainingPolicy(oppResult), boardSize), oppResult);
+                builder.append(",");
+            }
+
 
             terminalNode = terminalNode.getParent();
         }
         ImmutableList<Integer> intBoard = canonicalBoard(terminalNode);
-        ImmutableList<Integer> oppIntBoard = changeBoardPerspective(intBoard, boardSize);
         write(intBoard, terminalNode.getTrainingPolicy(result), result);
-        builder.append(",");
-        write(oppIntBoard, rotateBoard(terminalNode.getTrainingPolicy(oppResult), boardSize), oppResult);
         builder.append("]");
         try {
             outputWriter.write(builder.toString());
