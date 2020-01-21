@@ -117,7 +117,7 @@ public final class TreeNode implements Serializable {
         return parent;
     }
 
-    ImmutableList<Double> getTrainingPolicy() {
+    ImmutableList<Double> getTrainingPolicy(int result) {
         ImmutableList.Builder<Double> builder = ImmutableList.builder();
         for (int y = 0; y < currentBoard.getBoardSize(); y++) {
             for (int x = 0; x < currentBoard.getBoardSize(); x++) {
@@ -126,7 +126,7 @@ public final class TreeNode implements Serializable {
                 for (TreeNode child : getChildren()) {
                     if (child.getPositionToCreateBoard().equals(position) && child.getNumberOfSimulations() > 0) {
                         //todo find good policy values
-                        builder.add((child.getNumberOfSimulations() / getNumberOfSimulations()));
+                        builder.add((child.getNumberOfSimulations() / getNumberOfSimulations()) * result);
                         contains = true;
                         break;
                     }
