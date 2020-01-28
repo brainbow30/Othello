@@ -92,7 +92,7 @@ public final class TreeNode implements Serializable {
             }
             //draw
         } else {
-            return -1.0;
+            return 0.0;
         }
     }
 
@@ -204,8 +204,10 @@ public final class TreeNode implements Serializable {
             if (policy == null) {
                 getNNPrediction(test);
             }
-            double uctValue = child.numberOfWins + (cpuct * policy.get(integerPosition)
-                    * (Math.sqrt(numberOfSimulations) / (1 + child.numberOfSimulations)));
+            double epsilon = 1e-6;
+            double uctValue = child.numberOfWins / (child.numberOfSimulations + epsilon) +
+                    (cpuct * policy.get(integerPosition)) * Math.sqrt(Math.log(numberOfSimulations + 1) / (child.numberOfSimulations + epsilon)) +
+                    random.nextDouble() * epsilon;
             if (uctValue > bestValue) {
                 selected = child;
                 bestValue = uctValue;
@@ -400,7 +402,6 @@ public final class TreeNode implements Serializable {
             return new TreeNode(this);
         }
     }
-
 
 
     public void addResult(Double result) {

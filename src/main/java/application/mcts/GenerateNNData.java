@@ -28,7 +28,7 @@ public class GenerateNNData {
 
     static ImmutableList<Integer> canonicalBoard(TreeNode node) {
         ImmutableList<Integer> intBoard = node.getCurrentBoard().asIntArray();
-        if (node.getRootColour().equals(COLOUR.BLACK)) {
+        if (node.getColour().equals(COLOUR.BLACK)) {
             return changeBoardPerspective(intBoard, node.getCurrentBoard().getBoardSize());
         }
         return intBoard;
@@ -98,11 +98,12 @@ public class GenerateNNData {
         Optional<COLOUR> winner = terminalNode.getCurrentBoard().getWinner(false);
         int result = 0;
         int oppResult = 0;
+
         if (winner.isPresent()) {
-            if (winner.get().equals(terminalNode.getRootColour())) {
+            if (winner.get().equals(COLOUR.WHITE)) {
                 result = 1;
                 oppResult = -1;
-            } else if (!winner.get().equals(terminalNode.getRootColour())) {
+            } else if (winner.get().equals(COLOUR.BLACK)) {
                 result = -1;
                 oppResult = 1;
             }
@@ -110,12 +111,11 @@ public class GenerateNNData {
         Integer boardSize = terminalNode.getCurrentBoard().getBoardSize();
         while (terminalNode.getParent() != null) {
             ImmutableList<Integer> intBoard = canonicalBoard(terminalNode);
-            if (terminalNode.getColour().equals(terminalNode.getRootColour())) {
+            if (terminalNode.getColour().equals(COLOUR.WHITE)) {
                 write(intBoard, terminalNode.getTrainingPolicy(result), result);
                 builder.append(",");
-            } else {
-                ImmutableList<Integer> oppIntBoard = changeBoardPerspective(intBoard, boardSize);
-                write(oppIntBoard, rotateBoard(terminalNode.getTrainingPolicy(oppResult), boardSize), oppResult);
+            } else if (terminalNode.getColour().equals(COLOUR.BLACK)) {
+                write(intBoard, rotateBoard(terminalNode.getTrainingPolicy(oppResult), boardSize), oppResult);
                 builder.append(",");
             }
 
@@ -123,7 +123,11 @@ public class GenerateNNData {
             terminalNode = terminalNode.getParent();
         }
         ImmutableList<Integer> intBoard = canonicalBoard(terminalNode);
-        write(intBoard, terminalNode.getTrainingPolicy(result), result);
+        if (terminalNode.getColour().equals(COLOUR.WHITE)) {
+            write(intBoard, terminalNode.getTrainingPolicy(result), result);
+        } else if (terminalNode.getColour().equals(COLOUR.BLACK)) {
+            write(intBoard, rotateBoard(terminalNode.getTrainingPolicy(oppResult), boardSize), oppResult);
+        }
         builder.append("]");
         try {
             outputWriter.write(builder.toString());
