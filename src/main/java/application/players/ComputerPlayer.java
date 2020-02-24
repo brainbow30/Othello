@@ -23,14 +23,17 @@ public class ComputerPlayer implements Player {
     private final Integer moveFunction;
     private final GenerateNNData generateNNData;
     private final Boolean writeTrainingData;
+    private final int tempThreshold;
+    private int turns;
 
 
     public ComputerPlayer(COLOUR counterColour, Integer moveFunction, Integer waitTime, Integer boardSize,
-                          String hostname, Boolean writeTrainingData, Double cpuct) {
+                          String hostname, Boolean writeTrainingData, Double cpuct, Integer tempThreshold) {
         this.counterColour = counterColour;
         this.moveFunction = moveFunction;
         this.waitTime = waitTime;
         this.cpuct = cpuct;
+        this.tempThreshold = tempThreshold;
         this.hostname = hostname;
         previousNode = null;
         generateNNData = new GenerateNNData("training" + boardSize + ".txt");
@@ -89,18 +92,24 @@ public class ComputerPlayer implements Player {
     }
 
     private ImmutablePosition getNextPositionMCTS(Board board, Integer nnFunction) {
+        turns += 1;
+        double temp = 1.0;
+        if (turns >= tempThreshold) {
+            temp = 0.01;
+        }
         MonteCarloTreeSearch monteCarloTreeSearch;
         TreeNode currentNode;
         //todo find replacement for previous node
-        if (previousNode != null) {
+        if (previousNode != null && !previousNode.isTerminalNode()) {
 
             currentNode = previousNode.findChildBoardMatch(board);
-            monteCarloTreeSearch = new MonteCarloTreeSearch(currentNode.clone(), waitTime, nnFunction, cpuct);
+            currentNode.setRoot();
+            monteCarloTreeSearch = new MonteCarloTreeSearch(currentNode, waitTime, nnFunction, cpuct);
 
         } else {
             monteCarloTreeSearch = new MonteCarloTreeSearch(board, counterColour, waitTime, nnFunction, hostname, cpuct);
         }
-        currentNode = monteCarloTreeSearch.run();
+        currentNode = monteCarloTreeSearch.run(temp);
         previousNode = currentNode;
         final TreeNode trainingNode = currentNode;
         if (currentNode.isTerminalNode() && writeTrainingData) {

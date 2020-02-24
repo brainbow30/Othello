@@ -13,7 +13,7 @@ public class MonteCarloTreeSearchTest {
     @Test
     public void test() {
         MonteCarloTreeSearch monteCarloTreeSearch = new MonteCarloTreeSearch(board, COLOUR.WHITE, 3000, 0, null, 1.0);
-        ImmutablePosition immutablePosition = monteCarloTreeSearch.run().getPositionToCreateBoard();
+        ImmutablePosition immutablePosition = monteCarloTreeSearch.run(1).getPositionToCreateBoard();
         System.out.println("immutablePosition = " + immutablePosition);
 
 
