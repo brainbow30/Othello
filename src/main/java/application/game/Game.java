@@ -114,4 +114,12 @@ class Game {
         player1.reset();
         player2.reset();
     }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
 }

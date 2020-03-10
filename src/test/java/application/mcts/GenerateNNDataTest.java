@@ -17,7 +17,6 @@ public class GenerateNNDataTest {
     private GenerateNNData GenerateNNData;
 
     public void setup() {
-        GenerateNNData = new GenerateNNData("testWrite.txt");
         board = new Board(4, new OthelloVerifier(), 0.0, 0.0, 0.0);
         treeNode = TreeNode.builder().colour(COLOUR.WHITE).currentBoard(board).positionToCreateBoard(null).parent(null).rootColour(COLOUR.WHITE).hostname("127.0.0.1:5000").build();
     }
@@ -38,11 +37,6 @@ public class GenerateNNDataTest {
         }
     }
 
-    public void save() {
-        GenerateNNData.open();
-        GenerateNNData.save(treeNode);
-        GenerateNNData.close();
-    }
 
     private ImmutableList<String> readFile() throws IOException {
         ImmutableList.Builder<String> builder = ImmutableList.builder();

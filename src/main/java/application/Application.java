@@ -3,6 +3,8 @@ package application;
 import application.game.COLOUR;
 import application.game.Game;
 import application.gui.GUI;
+import application.mcts.GenerateNNData;
+import application.players.ComputerPlayer;
 import application.players.Player;
 import com.google.common.base.Optional;
 import org.glassfish.jersey.client.ClientConfig;
@@ -20,9 +22,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.UriBuilder;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 
@@ -95,32 +94,33 @@ class Application {
         };
     }
 
-    //todo remove need to save to txt
     void trainNN() {
         System.out.println("Training Neural Network...");
-        try {
-            Scanner in = new Scanner(new FileReader("intBoards/training" + boardSize + ".txt"));
-            StringBuilder sb = new StringBuilder();
-            while (in.hasNext()) {
-                sb.append(in.next());
-            }
-            in.close();
-            String trainingData = sb.toString();
-            String trainingDataJSON = "{\"data\":\"" + trainingData + "\"}";
-            ClientConfig config = new ClientConfig();
-            Client client = ClientBuilder.newClient(config);
 
-            WebTarget target = client.target(UriBuilder.fromUri(
-                    "http://127.0.0.1:5000").build());
-
-            // Get JSON for application
-            String jsonResponse = target.path("train").path(boardSize.toString()).request().put(Entity.json(trainingDataJSON)).toString();
-
-
-            System.out.println(jsonResponse);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        Player player1 = game.getPlayer1();
+        Player player2 = game.getPlayer2();
+        String trainingData = "";
+        if (player1 instanceof ComputerPlayer && ((ComputerPlayer) player1).getPreviousNode() != null) {
+            trainingData += GenerateNNData.save(((ComputerPlayer) player1).getPreviousNode());
         }
+        if (player2 instanceof ComputerPlayer && ((ComputerPlayer) player2).getPreviousNode() != null) {
+            trainingData += GenerateNNData.save(((ComputerPlayer) player2).getPreviousNode());
+        }
+        trainingData = "[" + trainingData + "]";
+
+        String trainingDataJSON = "{\"data\":\"" + trainingData + "\"}";
+        ClientConfig config = new ClientConfig();
+        Client client = ClientBuilder.newClient(config);
+
+        WebTarget target = client.target(UriBuilder.fromUri(
+                "http://127.0.0.1:5000").build());
+
+        // Get JSON for application
+        String jsonResponse = target.path("train").path(boardSize.toString()).request().put(Entity.json(trainingDataJSON)).toString();
+
+
+        System.out.println(jsonResponse);
+
     }
 
 }
