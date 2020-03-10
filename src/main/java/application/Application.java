@@ -101,10 +101,12 @@ class Application {
         Player player2 = game.getPlayer2();
         String trainingData = "";
         if (player1 instanceof ComputerPlayer && ((ComputerPlayer) player1).getPreviousNode() != null) {
-            trainingData += GenerateNNData.save(((ComputerPlayer) player1).getPreviousNode());
+            trainingData += GenerateNNData.save(((ComputerPlayer) player1).getPreviousNode()) + ",";
         }
         if (player2 instanceof ComputerPlayer && ((ComputerPlayer) player2).getPreviousNode() != null) {
             trainingData += GenerateNNData.save(((ComputerPlayer) player2).getPreviousNode());
+        } else {
+            trainingData = trainingData.substring(0, trainingData.length() - 1);
         }
         trainingData = "[" + trainingData + "]";
 
