@@ -22,6 +22,8 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.UriBuilder;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -35,11 +37,13 @@ class Application {
     private final Boolean useGUI;
     private final boolean humanPlayer1;
     private final boolean humanPlayer2;
+    private final boolean eval;
+    private final Integer evalGames;
 
     @Autowired
     public Application(Game game, @Value("${numberOfGames}") Integer numberOfGames, @Value("${board.size}") Integer boardSize,
                        @Value("${nn.train}") Boolean train, @Value("${useGUI}") Boolean useGUI,
-                       @Value("${player1.human}") Boolean humanPlayer1, @Value("${player2.human}") Boolean humanPlayer2) {
+                       @Value("${player1.human}") Boolean humanPlayer1, @Value("${player2.human}") Boolean humanPlayer2, @Value("${eval}") Boolean eval, @Value("${evalGames}") Integer evalGames) {
         this.game = game;
         this.numberOfGames = numberOfGames;
         this.boardSize = boardSize;
@@ -47,6 +51,8 @@ class Application {
         this.useGUI = useGUI;
         this.humanPlayer1 = humanPlayer1;
         this.humanPlayer2 = humanPlayer2;
+        this.eval = eval;
+        this.evalGames = evalGames;
     }
 
 
@@ -61,37 +67,73 @@ class Application {
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
 
+            if (!eval) {
+                Integer player1Wins, draws;
+                Integer[] stats = play(numberOfGames);
+                player1Wins = stats[0];
+                draws = stats[1];
+                System.out.println("\n\nFinal Score after " + numberOfGames + " games\n" + player1Wins + ":" + ((numberOfGames - player1Wins) - draws + " with " + draws + " draws"));
+            } else {
+                Map<Double, Double> evaluationResults = evaluation(numberOfGames);
+                System.out.println("evaluationResults = " + evaluationResults);
+            }
+        };
+    }
 
-            Integer player1Wins = 0;
-            int draws = 0;
-            //play locally
-            for (int i = 0; i < numberOfGames; i++) {
-                game.reset();
+    private Integer[] play(Integer numberOfGames) {
+        Integer player1Wins = 0;
+        Integer draws = 0;
+        //play locally
+        for (int i = 0; i < numberOfGames; i++) {
+            game.reset();
 
-                Optional<Player> winner = game.play(useGUI);
-                if (winner.isPresent()) {
-                    if (winner.get().getCounterColour().equals(COLOUR.WHITE)) {
-                        player1Wins++;
-                    }
-                } else {
-                    draws++;
+            Optional<Player> winner = game.play(useGUI);
+            if (winner.isPresent()) {
+                if (winner.get().getCounterColour().equals(COLOUR.WHITE)) {
+                    player1Wins++;
                 }
-                //rest time before next game
-                if (humanPlayer1 || humanPlayer2) {
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (train) {
-                    trainNN();
+            } else {
+                draws++;
+            }
+            //rest time before next game
+            if (humanPlayer1 || humanPlayer2) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-            System.out.println("\n\nFinal Score after " + numberOfGames + " games\n" + player1Wins + ":" + ((numberOfGames - player1Wins) - draws + " with " + draws + " draws"));
+            if (train) {
+                trainNN();
+            }
+        }
+        Integer[] stats = {player1Wins, draws};
+        return stats;
+    }
 
+    private Map<Double, Double> evaluation(Integer numberOfGames) {
+        Map<Double, Double> winRatios = new HashMap<Double, Double>();
+        Player player1 = game.getPlayer1();
+        Player player2 = game.getPlayer2();
 
-        };
+        for (int i = 0; i < numberOfGames; i++) {
+            Integer player1Wins, draws;
+            Integer[] stats = play(evalGames);
+            player1Wins = stats[0];
+            draws = stats[1];
+            Double player1WinRatio = (player1Wins * 1.0 / (evalGames - draws));
+            if (player2 instanceof ComputerPlayer) {
+                Double player2WinRatio = 1 - player1WinRatio;
+                Double cpuct = ((ComputerPlayer) player2).getCpuct();
+                winRatios.put(cpuct, player2WinRatio);
+                ((ComputerPlayer) player2).setCpuct(cpuct + 0.2);
+            } else if (player1 instanceof ComputerPlayer) {
+                Double cpuct = ((ComputerPlayer) player1).getCpuct();
+                winRatios.put(cpuct, player1WinRatio);
+                ((ComputerPlayer) player1).setCpuct(cpuct + 0.2);
+            }
+        }
+        return winRatios;
     }
 
     void trainNN() {

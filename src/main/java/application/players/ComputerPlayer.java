@@ -15,18 +15,17 @@ public class ComputerPlayer implements Player {
 
     private final COLOUR counterColour;
     private final Integer waitTime;
-    private final Double cpuct;
+    private Double cpuct;
     private final String hostname;
     private TreeNode previousNode;
 
     private final Integer moveFunction;
-    private final Boolean writeTrainingData;
-    private final int tempThreshold;
+    private int tempThreshold;
     private int turns;
 
 
-    public ComputerPlayer(COLOUR counterColour, Integer moveFunction, Integer waitTime, Integer boardSize,
-                          String hostname, Boolean writeTrainingData, Double cpuct, Integer tempThreshold) {
+    public ComputerPlayer(COLOUR counterColour, Integer moveFunction, Integer waitTime,
+                          String hostname, Double cpuct, Integer tempThreshold) {
         this.counterColour = counterColour;
         this.moveFunction = moveFunction;
         this.waitTime = waitTime;
@@ -34,7 +33,6 @@ public class ComputerPlayer implements Player {
         this.tempThreshold = tempThreshold;
         this.hostname = hostname;
         previousNode = null;
-        this.writeTrainingData = writeTrainingData;
 
     }
 
@@ -117,5 +115,21 @@ public class ComputerPlayer implements Player {
 
     public TreeNode getPreviousNode() {
         return previousNode;
+    }
+
+    public Double getCpuct() {
+        return cpuct;
+    }
+
+    public void setCpuct(Double cpuct) {
+        this.cpuct = cpuct;
+    }
+
+    public int getTempThreshold() {
+        return tempThreshold;
+    }
+
+    public void setTempThreshold(int tempThreshold) {
+        this.tempThreshold = tempThreshold;
     }
 }
