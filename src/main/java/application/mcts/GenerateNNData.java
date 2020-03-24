@@ -8,7 +8,7 @@ public class GenerateNNData {
 
     static ImmutableList<Integer> canonicalBoard(TreeNode node) {
         ImmutableList<Integer> intBoard = node.getCurrentBoard().asIntArray();
-        if (node.getRootColour().equals(COLOUR.BLACK)) {
+        if (node.getRootColour().equals(COLOUR.WHITE)) {
             return changeBoardPerspective(intBoard, node.getCurrentBoard().getBoardSize());
         }
         return intBoard;
