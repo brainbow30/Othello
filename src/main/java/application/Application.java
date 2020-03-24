@@ -197,10 +197,10 @@ class Application {
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
         String trainingData = "";
-        if (player1 instanceof ComputerPlayer && ((ComputerPlayer) player1).getPreviousNode() != null) {
+        if (player1 instanceof ComputerPlayer && ((ComputerPlayer) player1).getPreviousNode() != null && ((ComputerPlayer) player1).getPreviousNode().isTerminalNode()) {
             trainingData += GenerateNNData.save(((ComputerPlayer) player1).getPreviousNode()) + ",";
         }
-        if (player2 instanceof ComputerPlayer && ((ComputerPlayer) player2).getPreviousNode() != null) {
+        if (player2 instanceof ComputerPlayer && ((ComputerPlayer) player2).getPreviousNode() != null && ((ComputerPlayer) player2).getPreviousNode().isTerminalNode()) {
             trainingData += GenerateNNData.save(((ComputerPlayer) player2).getPreviousNode());
         } else {
             trainingData = trainingData.substring(0, trainingData.length() - 1);

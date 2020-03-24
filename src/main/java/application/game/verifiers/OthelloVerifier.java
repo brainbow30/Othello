@@ -34,17 +34,17 @@ public class OthelloVerifier implements Serializable, Verifier {
 
                 if (y == (boardSize / 2) - 1) {
                     if (x == (boardSize / 2) - 1) {
-                        rowBuilder.add(Optional.of(new Counter(COLOUR.WHITE)));
-                    } else if (x == (boardSize / 2)) {
                         rowBuilder.add(Optional.of(new Counter(COLOUR.BLACK)));
+                    } else if (x == (boardSize / 2)) {
+                        rowBuilder.add(Optional.of(new Counter(COLOUR.WHITE)));
                     } else {
                         rowBuilder.add(Optional.absent());
                     }
                 } else if (y == (boardSize / 2)) {
                     if (x == (boardSize / 2) - 1) {
-                        rowBuilder.add(Optional.of(new Counter(COLOUR.BLACK)));
-                    } else if (x == (boardSize / 2)) {
                         rowBuilder.add(Optional.of(new Counter(COLOUR.WHITE)));
+                    } else if (x == (boardSize / 2)) {
+                        rowBuilder.add(Optional.of(new Counter(COLOUR.BLACK)));
                     } else {
                         rowBuilder.add(Optional.absent());
                     }

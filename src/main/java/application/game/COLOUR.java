@@ -12,13 +12,13 @@ public enum COLOUR {
         }
     }
 
-    public static Double getColourValue(COLOUR colour) {
-        if (colour.equals(WHITE)) {
-            return 1.0;
-        } else if (colour.equals(BLACK)) {
-            return -1.0;
+    public static Integer getColourValue(COLOUR colour) {
+        if (colour.equals(BLACK)) {
+            return 1;
+        } else if (colour.equals(WHITE)) {
+            return -1;
         } else {
-            return 0.0;
+            return 0;
         }
     }
 }

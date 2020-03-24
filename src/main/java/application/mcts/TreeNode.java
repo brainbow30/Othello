@@ -121,7 +121,7 @@ public final class TreeNode implements Serializable {
         return parent;
     }
 
-    public ImmutableList<Double> getTrainingPolicy(double result) {
+    public ImmutableList<Double> getTrainingPolicy() {
         ImmutableList.Builder<Double> builder = ImmutableList.builder();
         for (int y = 0; y < currentBoard.getBoardSize(); y++) {
             for (int x = 0; x < currentBoard.getBoardSize(); x++) {

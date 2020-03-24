@@ -50,21 +50,10 @@ public class GenerateNNData {
                 builder.add(0);
             }
         }
-        ImmutableList<Integer> unrotatedBoard = ImmutableList.copyOf(builder.build());
-        return rotateBoard(unrotatedBoard, boardSize);
+        return ImmutableList.copyOf(builder.build());
     }
 
-    static ImmutableList rotateBoard(ImmutableList intArray, Integer boardSize) {
-        ImmutableList.Builder builder = ImmutableList.builder();
 
-        for (int x = boardSize - 1; x >= 0; x--) {
-            for (int y = 0; y < boardSize; y++) {
-                Object value = intArray.get(x + y * boardSize);
-                builder.add(value);
-            }
-        }
-        return builder.build();
-    }
 
     public static String save(TreeNode terminalNode) {
         TreeNode node = terminalNode;
@@ -75,25 +64,25 @@ public class GenerateNNData {
         double oppResult = 0.0;
 
         if (winner.isPresent()) {
-            if (winner.get().equals(COLOUR.WHITE)) {
+            if (winner.get().equals(terminalNode.getRootColour())) {
                 result = 1.0;
                 oppResult = -1.0;
-            } else if (winner.get().equals(COLOUR.BLACK)) {
+            } else if (winner.get().equals(COLOUR.opposite(terminalNode.getRootColour()))) {
                 result = -1.0;
                 oppResult = 1.0;
             }
         }
         node = node.getParent();
         while (node != null && node.getParent() != null) {
-            ImmutableList<Integer> intBoard = canonicalBoard(node);
+            ImmutableList<Integer> intBoard = node.getCurrentBoard().asIntArray();
             if (!node.getRootColour().equals(node.getColour())) {
                 intBoard = changeBoardPerspective(intBoard, node.getCurrentBoard().getBoardSize());
             }
-            if (node.getColour().equals(COLOUR.WHITE)) {
-                builder.append(write(intBoard, node.getTrainingPolicy(result), result));
+            if (node.getColour().equals(COLOUR.BLACK)) {
+                builder.append(write(intBoard, node.getTrainingPolicy(), result));
                 builder.append(",");
-            } else if (node.getColour().equals(COLOUR.BLACK)) {
-                builder.append(write(intBoard, node.getTrainingPolicy(result), oppResult));
+            } else if (node.getColour().equals(COLOUR.WHITE)) {
+                builder.append(write(intBoard, node.getTrainingPolicy(), oppResult));
                 builder.append(",");
             }
 
