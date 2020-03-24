@@ -56,8 +56,9 @@ public class GenerateNNData {
 
     static ImmutableList rotateBoard(ImmutableList intArray, Integer boardSize) {
         ImmutableList.Builder builder = ImmutableList.builder();
-        for (int y = boardSize - 1; y >= 0; y--) {
-            for (int x = boardSize - 1; x >= 0; x--) {
+
+        for (int x = boardSize - 1; x >= 0; x--) {
+            for (int y = 0; y < boardSize; y++) {
                 Object value = intArray.get(x + y * boardSize);
                 builder.add(value);
             }
