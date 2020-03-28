@@ -38,6 +38,7 @@ class Application {
     private final boolean humanPlayer1;
     private final boolean humanPlayer2;
     private final boolean eval;
+    private final Integer evalMode;
     private final Integer evalGames;
     private final Double evalIncrease;
     private final String hostname;
@@ -45,7 +46,7 @@ class Application {
     @Autowired
     public Application(Game game, @Value("${numberOfGames}") Integer numberOfGames, @Value("${board.size}") Integer boardSize,
                        @Value("${nn.train}") Boolean train, @Value("${useGUI}") Boolean useGUI,
-                       @Value("${player1.human}") Boolean humanPlayer1, @Value("${player2.human}") Boolean humanPlayer2, @Value("${eval}") Boolean eval, @Value("${evalGames}") Integer evalGames, @Value("${evalIncrease}") Double evalIncrease, @Value("${hostname}") String hostname) {
+                       @Value("${player1.human}") Boolean humanPlayer1, @Value("${player2.human}") Boolean humanPlayer2, @Value("${eval}") Boolean eval, @Value("${evalMode}") Integer evalMode, @Value("${evalGames}") Integer evalGames, @Value("${evalIncrease}") Double evalIncrease, @Value("${hostname}") String hostname) {
         this.game = game;
         this.numberOfGames = numberOfGames;
         this.boardSize = boardSize;
@@ -54,6 +55,7 @@ class Application {
         this.humanPlayer1 = humanPlayer1;
         this.humanPlayer2 = humanPlayer2;
         this.eval = eval;
+        this.evalMode = evalMode;
         this.evalGames = evalGames;
         this.evalIncrease = evalIncrease;
         this.hostname = hostname;
@@ -78,8 +80,15 @@ class Application {
                 draws = stats[1];
                 System.out.println("\n\nFinal Score after " + numberOfGames + " games\n" + player1Wins + ":" + ((numberOfGames - player1Wins) - draws + " with " + draws + " draws"));
             } else {
-
-                ImmutableList<ImmutableList<Double>> evaluationResults = evalCpuct(numberOfGames);
+                ImmutableList<ImmutableList<Double>> evaluationResults;
+                if (evalMode == 0) {
+                    evaluationResults = evalCpuct(numberOfGames);
+                } else if (evalMode == 1) {
+                    evaluationResults = evalTemp(numberOfGames);
+                } else {
+                    System.out.println("No associated evaluation mode");
+                    evaluationResults = ImmutableList.of();
+                }
 
                 System.out.println("evaluationResults = " + evaluationResults);
                 StringBuilder resultString = new StringBuilder();
@@ -108,7 +117,7 @@ class Application {
         //play locally
         for (int i = 0; i < numberOfGames; i++) {
             game.reset();
-
+            System.out.println("Game Number: " + i);
             Optional<Player> winner = game.play(useGUI);
             if (winner.isPresent()) {
                 if (winner.get().getCounterColour().equals(COLOUR.WHITE)) {
@@ -139,6 +148,7 @@ class Application {
         Player player2 = game.getPlayer2();
 
         for (int i = 0; i < numberOfGames; i++) {
+            System.out.println("Eval Number: " + i);
             Integer player1Wins, draws;
             Integer[] stats = play(evalGames);
             player1Wins = stats[0];
@@ -168,6 +178,7 @@ class Application {
         Player player2 = game.getPlayer2();
 
         for (int i = 0; i < numberOfGames; i++) {
+            System.out.println("Eval Number: " + i);
             Integer player1Wins, draws;
             Integer[] stats = play(evalGames);
             player1Wins = stats[0];
