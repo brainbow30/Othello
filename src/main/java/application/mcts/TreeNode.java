@@ -132,7 +132,7 @@ public final class TreeNode implements Serializable {
                         child.prevSimulations = child.currentSimulations;
                     }
                     //if visited then currentsimulation>1 else >0
-                    if (child.getPositionToCreateBoard().equals(position) && (currentSimulations > 0 + visited.compareTo(false))) {
+                    if (child.getPositionToCreateBoard().equals(position) && (currentSimulations > (0 + visited.compareTo(false)))) {
                         builder.add((child.getPrevSimulations() / (currentSimulations - visited.compareTo(false))));
                         contains = true;
                         break;

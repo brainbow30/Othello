@@ -9,7 +9,7 @@ public class GenerateNNData {
     static ImmutableList<Integer> canonicalBoard(TreeNode node) {
         ImmutableList<Integer> intBoard = node.getCurrentBoard().asIntArray();
         if (node.getRootColour().equals(COLOUR.WHITE)) {
-            return changeBoardPerspective(intBoard, node.getCurrentBoard().getBoardSize());
+            return changeBoardPerspective(intBoard);
         }
         return intBoard;
     }
@@ -39,7 +39,7 @@ public class GenerateNNData {
     }
 
 
-    static ImmutableList<Integer> changeBoardPerspective(ImmutableList<Integer> intBoard, Integer boardSize) {
+    static ImmutableList<Integer> changeBoardPerspective(ImmutableList<Integer> intBoard) {
         ImmutableList.Builder<Integer> builder = ImmutableList.builder();
         for (Integer pos : intBoard) {
             if (pos == 1) {
@@ -76,7 +76,7 @@ public class GenerateNNData {
         while (node != null && node.getParent() != null) {
             ImmutableList<Integer> intBoard = node.getCurrentBoard().asIntArray();
             if (!node.getRootColour().equals(node.getColour())) {
-                intBoard = changeBoardPerspective(intBoard, node.getCurrentBoard().getBoardSize());
+                intBoard = changeBoardPerspective(intBoard);
             }
             if (node.getColour().equals(COLOUR.BLACK)) {
                 builder.append(write(intBoard, node.getTrainingPolicy(), result));
