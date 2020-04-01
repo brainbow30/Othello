@@ -111,6 +111,7 @@ public class ComputerPlayer implements Player {
 
     public void reset() {
         previousNode = null;
+        turns = 0;
     }
 
     public TreeNode getPreviousNode() {

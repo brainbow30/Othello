@@ -81,13 +81,17 @@ class Application {
                 System.out.println("\n\nFinal Score after " + numberOfGames + " games\n" + player1Wins + ":" + ((numberOfGames - player1Wins) - draws + " with " + draws + " draws"));
             } else {
                 ImmutableList<ImmutableList<Double>> evaluationResults;
+                String evaluation;
                 if (evalMode == 0) {
                     evaluationResults = evalCpuct(numberOfGames);
+                    evaluation = "Cpuct";
                 } else if (evalMode == 1) {
                     evaluationResults = evalTemp(numberOfGames);
+                    evaluation = "Temperature Threshold";
                 } else {
                     System.out.println("No associated evaluation mode");
                     evaluationResults = ImmutableList.of();
+                    evaluation = "";
                 }
 
                 System.out.println("evaluationResults = " + evaluationResults);
@@ -103,7 +107,7 @@ class Application {
                 WebTarget target = client.target(UriBuilder.fromUri(
                         hostname).build());
                 String jsonResponse = target.path("plot")
-                        .path(resultString.toString()).path("Temperature Threshold").request()
+                        .path(resultString.toString()).path(evaluation).request()
                         .accept(MediaType.APPLICATION_JSON).get(String.class);
                 System.out.println("jsonResponse = " + jsonResponse);
 

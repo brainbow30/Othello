@@ -204,11 +204,6 @@ public final class TreeNode implements Serializable {
             double bestValue = Double.MIN_VALUE;
             TreeNode selected = children.get(random.nextInt(children.size()));
             for (TreeNode child : children) {
-                if (getWinnerValue(rootColour, child.getCurrentBoard().getWinner(false)) == 1.0) {
-                    return child;
-                }
-
-
                 ImmutablePosition position = child.positionToCreateBoard;
                 int integerPosition = position.x() + position.y() * currentBoard.getBoardSize();
                 if (policy == null) {
@@ -217,17 +212,17 @@ public final class TreeNode implements Serializable {
                 Double q = 0.0;
                 if (child.currentSimulations > 0) {
                     q = child.numberOfWins / child.currentSimulations;
+                    //if opponent's turn in game then best move for opponent is worst move for player
+                    if (rootColour.equals(child.getColour())) {
+                        q *= -1;
+                    }
                 }
 
                 double epsilon = 1e-6;
                 double uctValue = q +
                         (temp * cpuct * policy.get(integerPosition)) * (Math.sqrt(currentSimulations) / (child.currentSimulations + 1)) +
                         random.nextDouble() * epsilon;
-                int opponentsTurn = -1;
-                if (!rootColour.equals(colour)) {
-                    opponentsTurn = 1;
-                }
-                if ((uctValue * opponentsTurn) > bestValue) {
+                if (uctValue > bestValue) {
                     selected = child;
                     bestValue = uctValue;
                 }
