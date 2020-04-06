@@ -1,0 +1,7 @@
+application\game\BoardTest.class
+application\mcts\MonteCarloTreeSearchTest.class
+application\gui\GUITest.class
+application\mcts\GenerateTrainingDataTest.class
+application\game\OthelloVerifierTest.class
+application\game\CounterTest.class
+application\mcts\TreeNodeTest.class

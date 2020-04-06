@@ -5,11 +5,9 @@ import application.game.Board;
 import application.game.COLOUR;
 import application.game.Counter;
 import application.game.verifiers.OthelloVerifier;
-import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TreeNodeTest {
@@ -38,23 +36,6 @@ public class TreeNodeTest {
 
     }
 
-    @Test
-    public void canonicalBoardTest() {
-        ImmutableList<Integer> whiteNNBoard = whiteNode.canonicalBoard();
-        ImmutableList<Integer> whiteExpected = ImmutableList.of(
-                0, 0, 0, 0,
-                0, 1, -1, 0,
-                0, -1, 1, 0,
-                0, 0, 0, 0);
-        assertEquals(whiteExpected, whiteNNBoard);
-        ImmutableList<Integer> blackExpected = ImmutableList.of(
-                0, 0, 0, 0,
-                0, 1, -1, 0,
-                0, -1, 1, 0,
-                0, 0, 0, 0);
-        ImmutableList<Integer> blackNNBoard = blackNode.canonicalBoard();
-        assertEquals(blackExpected, blackNNBoard);
-    }
 
     @Test
     public void findChildBoardMatchTest() {

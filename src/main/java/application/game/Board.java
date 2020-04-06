@@ -355,15 +355,12 @@ public class Board implements Serializable {
 
     public ImmutableList<Integer> asIntArray() {
         ImmutableList.Builder<Integer> builder = ImmutableList.builder();
-        for (ImmutableList<Optional<Counter>> row : board) {
-            for (Optional<Counter> counterOptional : row) {
-                if (counterOptional.isPresent()) {
-                    Counter counter = counterOptional.get();
-                    if (counter.getColour().equals(COLOUR.WHITE)) {
-                        builder.add(1);
-                    } else {
-                        builder.add(-1);
-                    }
+        for (int y = 0; y < boardSize; y++) {
+            for (int x = 0; x < boardSize; x++) {
+                ImmutablePosition position = ImmutablePosition.builder().x(x).y(y).build();
+                Optional<Counter> counter = getCounter(position);
+                if (counter.isPresent()) {
+                    builder.add(COLOUR.getColourValue(counter.get().getColour()));
                 } else {
                     builder.add(0);
                 }

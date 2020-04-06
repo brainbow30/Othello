@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -17,12 +16,12 @@ import static org.junit.Assert.assertTrue;
 public class BoardTest {
 
     private Board board;
-    @Mock
     private Counter counter;
 
     @Before
     public void setup() {
         board = new Board(8, new OthelloVerifier(), 0.01, 10.0, 1.0);
+        counter = new Counter();
     }
 
     @Test
