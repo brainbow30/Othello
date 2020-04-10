@@ -196,6 +196,18 @@ public final class TreeNode implements Serializable {
         }
     }
 
+    static double getQ(TreeNode node) {
+        double q = 0.0;
+        if (node.currentSimulations > 0) {
+            q = node.numberOfWins / node.currentSimulations;
+            //if opponent's turn in game then best move for opponent is worst move for player
+            if (node.getRootColour().equals(node.getColour())) {
+                q *= -1;
+            }
+        }
+        return q;
+    }
+
     public TreeNode selectAlphaZeroMove(Double cpuct, Boolean test, Double temp) {
         Random random = new Random();
         ImmutableList<TreeNode> children = getChildren();
@@ -209,15 +221,7 @@ public final class TreeNode implements Serializable {
                 if (policy == null) {
                     getNNPrediction(test);
                 }
-                Double q = 0.0;
-                if (child.currentSimulations > 0) {
-                    q = child.numberOfWins / child.currentSimulations;
-                    //if opponent's turn in game then best move for opponent is worst move for player
-                    if (rootColour.equals(child.getColour())) {
-                        q *= -1;
-                    }
-                }
-
+                Double q = getQ(child);
                 double epsilon = 1e-6;
                 double uctValue = q +
                         (temp * cpuct * policy.get(integerPosition)) * (Math.sqrt(currentSimulations) / (child.currentSimulations + 1)) +
