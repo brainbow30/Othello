@@ -4,6 +4,8 @@ import application.game.COLOUR;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
+import static application.mcts.TreeNode.getQ;
+
 public class GenerateNNData {
 
     static ImmutableList<Integer> canonicalBoard(TreeNode node) {
@@ -54,20 +56,18 @@ public class GenerateNNData {
     }
 
 
-
-    public static String save(TreeNode terminalNode) {
+    public static String save(TreeNode terminalNode, Optional<COLOUR> winner) {
         TreeNode node = terminalNode;
+        COLOUR rootColour = terminalNode.getRootColour();
         StringBuilder builder = new StringBuilder();
-
-        Optional<COLOUR> winner = node.getCurrentBoard().getWinner(false);
         double result = 0.0;
         double oppResult = 0.0;
 
         if (winner.isPresent()) {
-            if (winner.get().equals(terminalNode.getRootColour())) {
+            if (winner.get().equals(COLOUR.BLACK)) {
                 result = 1.0;
                 oppResult = -1.0;
-            } else if (winner.get().equals(COLOUR.opposite(terminalNode.getRootColour()))) {
+            } else if (winner.get().equals(COLOUR.WHITE)) {
                 result = -1.0;
                 oppResult = 1.0;
             }
@@ -75,15 +75,22 @@ public class GenerateNNData {
         node = node.getParent();
         while (node != null && node.getParent() != null) {
             ImmutableList<Integer> intBoard = node.getCurrentBoard().asIntArray();
-            if (!node.getRootColour().equals(node.getColour())) {
-                intBoard = changeBoardPerspective(intBoard);
-            }
-            if (node.getColour().equals(COLOUR.BLACK)) {
-                builder.append(write(intBoard, node.getTrainingPolicy(), result));
-                builder.append(",");
-            } else if (node.getColour().equals(COLOUR.WHITE)) {
-                builder.append(write(intBoard, node.getTrainingPolicy(), oppResult));
-                builder.append(",");
+            if (rootColour.equals(COLOUR.BLACK)) {
+                if (node.getColour().equals(rootColour)) {
+                    builder.append(write(intBoard, node.getTrainingPolicy(), (result + getQ(node)) / 2.0));
+                    builder.append(",");
+                } else if (!node.getColour().equals(rootColour)) {
+                    builder.append(write(changeBoardPerspective(intBoard), node.getTrainingPolicy(), (oppResult + getQ(node) * -1) / 2.0));
+                    builder.append(",");
+                }
+            } else if (rootColour.equals(COLOUR.WHITE)) {
+                if (node.getColour().equals(rootColour)) {
+                    builder.append(write(changeBoardPerspective(intBoard), node.getTrainingPolicy(), (oppResult + getQ(node)) / 2.0));
+                    builder.append(",");
+                } else if (!node.getColour().equals(rootColour)) {
+                    builder.append(write(intBoard, node.getTrainingPolicy(), (result + getQ(node) * -1) / 2.0));
+                    builder.append(",");
+                }
             }
 
 

@@ -160,7 +160,7 @@ class Application {
                 }
             }
             if (train) {
-                trainNN();
+                trainNN(winner);
             }
         }
         Integer[] stats = {player1Wins, draws};
@@ -284,22 +284,32 @@ class Application {
         return results;
     }
 
-    void trainNN() {
+    void trainNN(Optional<Player> winningPlayer) {
         System.out.println("Training Neural Network...");
 
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
+        Optional<COLOUR> winner;
+        if (winningPlayer.isPresent()) {
+            if (winningPlayer.get().getCounterColour().equals(COLOUR.WHITE)) {
+                winner = Optional.of(COLOUR.WHITE);
+            } else {
+                winner = Optional.of(COLOUR.BLACK);
+            }
+        } else {
+            winner = Optional.absent();
+        }
         String trainingData = "";
         if (player1 instanceof ComputerPlayer && ((ComputerPlayer) player1).getPreviousNode() != null && ((ComputerPlayer) player1).getPreviousNode().isTerminalNode()) {
-            trainingData += GenerateNNData.save(((ComputerPlayer) player1).getPreviousNode()) + ",";
+            trainingData += GenerateNNData.save(((ComputerPlayer) player1).getPreviousNode(), winner) + ",";
         }
         if (player2 instanceof ComputerPlayer && ((ComputerPlayer) player2).getPreviousNode() != null && ((ComputerPlayer) player2).getPreviousNode().isTerminalNode()) {
-            trainingData += GenerateNNData.save(((ComputerPlayer) player2).getPreviousNode());
+            trainingData += GenerateNNData.save(((ComputerPlayer) player2).getPreviousNode(), winner);
         } else {
             trainingData = trainingData.substring(0, trainingData.length() - 1);
         }
         trainingData = "[" + trainingData + "]";
-
+        System.out.println("trainingData = " + trainingData);
         String trainingDataJSON = "{\"data\":\"" + trainingData + "\"}";
         ClientConfig config = new ClientConfig();
         Client client = ClientBuilder.newClient(config);
