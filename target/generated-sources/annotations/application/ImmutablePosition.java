@@ -22,7 +22,7 @@ import org.immutables.value.Generated;
 @Generated(from = "Position", generator = "Immutables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
-@javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
+@javax.annotation.processing.Generated("org.immutables.processor.ProxyProcessor")
 @Immutable
 @CheckReturnValue
 public final class ImmutablePosition implements Position {
