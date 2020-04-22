@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @SpringBootApplication
-class Application {
+public class Application {
 
     private final Game game;
     private final Integer numberOfGames;
@@ -66,8 +66,6 @@ class Application {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = new SpringApplicationBuilder(Application.class).headless(false).run(args);
         GUI frame = context.getBean(GUI.class);
-
-
     }
 
     @Bean
