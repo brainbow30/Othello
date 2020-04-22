@@ -128,4 +128,7 @@ public class GUI {
         return boardGridPanel.getClickedPos();
     }
 
+    public void getFocus() {
+        mainPanel.requestFocusInWindow();
+    }
 }

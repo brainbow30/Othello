@@ -17,20 +17,20 @@ import java.io.*;
 import java.util.Random;
 
 
-public final class TreeNode implements Serializable {
+public final class TreeNode {
     private final Board currentBoard;
     private final COLOUR colour;
     private final COLOUR rootColour;
     private final TreeNode parent;
+    private final ImmutablePosition positionToCreateBoard;
+    private final String hostname;
     private Double numberOfWins = 0.0;
     private Double currentSimulations = 0.0;
     private Double prevSimulations = 0.0;
     private Boolean visited = false;
     private ImmutableList<TreeNode> children;
     private Boolean terminalNode = false;
-    private final ImmutablePosition positionToCreateBoard;
     private Boolean isRoot = false;
-    private final String hostname;
     private ImmutableList<Double> policy;
 
 
@@ -49,6 +49,29 @@ public final class TreeNode implements Serializable {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    private static Double getWinnerValue(COLOUR rootColour, Optional<COLOUR> actualColour) {
+        if (actualColour.isPresent()) {
+            //win
+            if (rootColour.equals(actualColour.get())) {
+                return 1.0;
+                //loss
+            } else {
+                return -1.0;
+            }
+            //draw
+        } else {
+            return 0.0;
+        }
+    }
+
+    static double getQ(TreeNode node) {
+        double q = 0.0;
+        if (node.currentSimulations > 0) {
+            q = node.numberOfWins / node.currentSimulations;
+        }
+        return q;
     }
 
     private ImmutableList<TreeNode> generateChildren() {
@@ -80,21 +103,6 @@ public final class TreeNode implements Serializable {
             builder.add(childNode);
         }
         return builder.build();
-    }
-
-    private static Double getWinnerValue(COLOUR rootColour, Optional<COLOUR> actualColour) {
-        if (actualColour.isPresent()) {
-            //win
-            if (rootColour.equals(actualColour.get())) {
-                return 1.0;
-                //loss
-            } else {
-                return -1.0;
-            }
-            //draw
-        } else {
-            return 0.0;
-        }
     }
 
     public Double getPrevSimulations() {
@@ -150,7 +158,6 @@ public final class TreeNode implements Serializable {
         return currentSimulations;
     }
 
-
     Double getNumberOfWins() {
         return numberOfWins;
     }
@@ -178,11 +185,16 @@ public final class TreeNode implements Serializable {
         Random random = new Random();
         ImmutableList<TreeNode> children = getChildren();
         if (children.size() > 0) {
-            double bestValue = Double.MIN_VALUE;
+            double bestValue = Double.MAX_VALUE * -1.0;
             TreeNode selected = children.get(random.nextInt(children.size()));
             for (TreeNode child : children) {
                 double epsilon = 1e-6;
-                double uctValue = child.numberOfWins / (child.currentSimulations + epsilon) +
+                Double q = getQ(child);
+                //if opponent's turn in game then best move for opponent is worst move for player
+                if (child.getRootColour().equals(child.getColour())) {
+                    q *= -1;
+                }
+                double uctValue = q +
                         Math.sqrt(Math.log(currentSimulations + 1) / (child.currentSimulations + epsilon)) +
                         random.nextDouble() * epsilon;
                 if (uctValue > bestValue) {
@@ -201,7 +213,7 @@ public final class TreeNode implements Serializable {
         ImmutableList<TreeNode> children = getChildren();
         if (children.size() > 0) {
 
-            double bestValue = Double.MIN_VALUE;
+            double bestValue = Double.MAX_VALUE * -1.0;
             TreeNode selected = children.get(random.nextInt(children.size()));
             for (TreeNode child : children) {
                 ImmutablePosition position = child.positionToCreateBoard;
@@ -209,15 +221,11 @@ public final class TreeNode implements Serializable {
                 if (policy == null) {
                     getNNPrediction(test);
                 }
-                Double q = 0.0;
-                if (child.currentSimulations > 0) {
-                    q = child.numberOfWins / child.currentSimulations;
-                    //if opponent's turn in game then best move for opponent is worst move for player
-                    if (rootColour.equals(child.getColour())) {
-                        q *= -1;
-                    }
+                Double q = getQ(child);
+                //if opponent's turn in game then best move for opponent is worst move for player
+                if (child.getRootColour().equals(child.getColour())) {
+                    q *= -1;
                 }
-
                 double epsilon = 1e-6;
                 double uctValue = q +
                         (temp * cpuct * policy.get(integerPosition)) * (Math.sqrt(currentSimulations) / (child.currentSimulations + 1)) +
@@ -274,6 +282,11 @@ public final class TreeNode implements Serializable {
             policy = builder.build();
             return v;
         } catch (NumberFormatException e) {
+            System.out.println("error");
+            System.out.println("jsonResponse = " + jsonResponse);
+            e.printStackTrace();
+            return 0.0;
+        } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("error");
             System.out.println("jsonResponse = " + jsonResponse);
             e.printStackTrace();
@@ -383,6 +396,11 @@ public final class TreeNode implements Serializable {
         }
     }
 
+    public synchronized void addResult(Double result) {
+        currentSimulations++;
+        numberOfWins += result;
+    }
+
     @SuppressWarnings("ReturnOfThis")
     public static class Builder {
         private Board currentBoard;
@@ -426,12 +444,6 @@ public final class TreeNode implements Serializable {
         public TreeNode build() {
             return new TreeNode(this);
         }
-    }
-
-
-    public void addResult(Double result) {
-        currentSimulations++;
-        numberOfWins += result;
     }
 
 
