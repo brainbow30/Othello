@@ -33,6 +33,7 @@ public class HumanPlayer implements Player {
         while (invalidMove) {
             ImmutablePosition position;
             if (gui != null) {
+                gui.getFocus();
                 Optional<ImmutablePosition> clickedPos = Optional.absent();
                 while (!clickedPos.isPresent()) {
                     clickedPos = gui.getClickedPos();
