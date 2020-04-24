@@ -19,7 +19,7 @@ public class OthelloVerifierTest {
     public void validRightMoveTest() {
         verifier = new OthelloVerifier();
         board = new Board(8, verifier, 0.01, 10.0, 1.0);
-        counter = new Counter(COLOUR.WHITE);
+        counter = new Counter(COLOUR.BLACK);
 
 
         application.ImmutablePosition.Builder builder = application.ImmutablePosition.builder();
@@ -35,7 +35,7 @@ public class OthelloVerifierTest {
     public void validLeftMoveTest() {
         verifier = new OthelloVerifier();
         board = new Board(8, verifier, 0.01, 10.0, 1.0);
-        counter = new Counter(COLOUR.WHITE);
+        counter = new Counter(COLOUR.BLACK);
 
 
         application.ImmutablePosition.Builder builder = application.ImmutablePosition.builder();
@@ -51,7 +51,7 @@ public class OthelloVerifierTest {
     public void validDiagonalMoveTest() {
         verifier = new OthelloVerifier();
         board = new Board(8, verifier, 0.01, 10.0, 1.0);
-        counter = new Counter(COLOUR.WHITE);
+        counter = new Counter(COLOUR.BLACK);
 
 
         application.ImmutablePosition.Builder builder = application.ImmutablePosition.builder();
@@ -63,7 +63,7 @@ public class OthelloVerifierTest {
 
         builder.y(2);
         position = builder.build();
-        counter = new Counter(COLOUR.BLACK);
+        counter = new Counter(COLOUR.WHITE);
         assertEquals(true, verifier.validMove(board, counter.getColour(), position));
 
 
@@ -73,7 +73,7 @@ public class OthelloVerifierTest {
     public void invalidColourTest() {
         verifier = new OthelloVerifier();
         board = new Board(8, verifier, 0.01, 10.0, 1.0);
-        counter = new Counter(COLOUR.WHITE);
+        counter = new Counter(COLOUR.BLACK);
 
 
         application.ImmutablePosition.Builder builder = application.ImmutablePosition.builder();
@@ -88,7 +88,7 @@ public class OthelloVerifierTest {
     public void noNeighboursTest() {
         verifier = new OthelloVerifier();
         board = new Board(8, verifier, 0.01, 10.0, 1.0);
-        counter = new Counter(COLOUR.WHITE);
+        counter = new Counter(COLOUR.BLACK);
 
 
         application.ImmutablePosition.Builder builder = application.ImmutablePosition.builder();
@@ -103,7 +103,7 @@ public class OthelloVerifierTest {
     public void occupiedSpaceTest() {
         verifier = new OthelloVerifier();
         board = new Board(8, verifier, 0.01, 10.0, 1.0);
-        counter = new Counter(COLOUR.WHITE);
+        counter = new Counter(COLOUR.BLACK);
 
 
         application.ImmutablePosition.Builder builder = ImmutablePosition.builder();

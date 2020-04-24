@@ -39,13 +39,13 @@ public class TreeNodeTest {
 
     @Test
     public void findChildBoardMatchTest() {
-        Counter counter1 = new Counter(COLOUR.WHITE);
+        Counter counter1 = new Counter(COLOUR.BLACK);
         application.ImmutablePosition.Builder positionBuilder = ImmutablePosition.builder();
         positionBuilder.x(2).y(0);
         Board clone = board.clone();
         clone.addCounter(counter1, positionBuilder.build());
-        TreeNode childBoardMatch = whiteNode.findChildBoardMatch(clone);
-        assertTrue(whiteNode.getChildren().contains(childBoardMatch));
+        TreeNode childBoardMatch = blackNode.findChildBoardMatch(clone);
+        assertTrue(blackNode.getChildren().contains(childBoardMatch));
 
 
     }

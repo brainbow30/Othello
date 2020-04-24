@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="application.mcts.MonteCarloTreeSearchTest" time="3.055" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="application.mcts.MonteCarloTreeSearchTest" time="3.036" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
-    <property name="java.vm.version" value="11.0.5+10-b520.17"/>
-    <property name="sun.boot.library.path" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\193.5662.53\jbr\bin"/>
+    <property name="java.vm.version" value="11.0.6+8-b765.25"/>
+    <property name="sun.boot.library.path" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\201.6668.121\jbr\bin"/>
     <property name="maven.multiModuleProjectDirectory" value="C:\Users\brain\IdeaProjects\Othello"/>
     <property name="java.vm.vendor" value="JetBrains s.r.o"/>
     <property name="java.vendor.url" value="https://www.jetbrains.com/"/>
@@ -17,7 +17,7 @@
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="user.dir" value="C:\Users\brain\IdeaProjects\Othello"/>
     <property name="java.vm.compressedOopsMode" value="32-bit"/>
-    <property name="java.runtime.version" value="11.0.5+10-b520.17"/>
+    <property name="java.runtime.version" value="11.0.6+8-b765.25"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.io.tmpdir" value="C:\Users\brain\AppData\Local\Temp\"/>
@@ -26,42 +26,42 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="user.variant" value=""/>
     <property name="os.name" value="Windows 10"/>
-    <property name="maven.ext.class.path" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\193.5662.53\plugins\maven\lib\maven-event-listener.jar"/>
-    <property name="classworlds.conf" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\193.5662.53\plugins\maven\lib\maven3\bin\m2.conf"/>
+    <property name="idea.version2020.1" value="true"/>
+    <property name="maven.ext.class.path" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\201.6668.121\plugins\maven\lib\maven-event-listener.jar"/>
+    <property name="classworlds.conf" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\201.6668.121\plugins\maven\lib\maven3\bin\m2.conf"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\193.5662.53\jbr\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Users\brain\AppData\Local\Microsoft\WindowsApps;;."/>
-    <property name="maven.conf" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\193.5662.53\plugins\maven\lib\maven3/conf"/>
+    <property name="java.library.path" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\201.6668.121\jbr\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\libnvvp;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\libnvvp;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\libnvvp;C:\Program Files\Python37\Scripts\;C:\Program Files\Python37\;C:\Program Files\Python38\Scripts\;C:\Program Files\Python38\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\Graphviz2.38\bin;C:\Program Files (x86)\BaseX\bin;C:\Users\brain\AppData\Local\Microsoft\WindowsApps;C:\Users\brain\AppData\Local\Programs\Git\cmd;C:\Users\brain\AppData\Local\Programs\MiKTeX 2.9\miktex\bin\x64\;."/>
+    <property name="maven.conf" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\201.6668.121\plugins\maven\lib\maven3/conf"/>
     <property name="jdk.debug" value="release"/>
     <property name="java.class.version" value="55.0"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="os.version" value="10.0"/>
-    <property name="idea.version2019.3.1" value="true"/>
     <property name="user.home" value="C:\Users\brain"/>
     <property name="user.timezone" value="Europe/London"/>
     <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.specification.version" value="11"/>
-    <property name="user.name" value="brain"/>
-    <property name="java.class.path" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\193.5662.53\plugins\maven\lib\maven3\boot\plexus-classworlds-2.6.0.jar"/>
+    <property name="user.name" value="Ben"/>
+    <property name="java.class.path" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\201.6668.121\plugins\maven\lib\maven3\boot\plexus-classworlds-2.6.0.jar"/>
     <property name="java.vm.specification.version" value="11"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="sun.java.command" value="org.codehaus.classworlds.Launcher -Didea.version2019.3.1 install"/>
-    <property name="java.home" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\193.5662.53\jbr"/>
+    <property name="sun.java.command" value="org.codehaus.classworlds.Launcher -Didea.version2020.1 install"/>
+    <property name="java.home" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\201.6668.121\jbr"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
     <property name="java.vm.info" value="mixed mode"/>
-    <property name="java.version" value="11.0.5"/>
+    <property name="java.version" value="11.0.6"/>
     <property name="java.vendor" value="JetBrains s.r.o"/>
-    <property name="maven.home" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\193.5662.53\plugins\maven\lib\maven3"/>
+    <property name="maven.home" value="C:\Users\brain\AppData\Local\JetBrains\Toolbox\apps\IDEA-U\ch-0\201.6668.121\plugins\maven\lib\maven3"/>
     <property name="file.separator" value="\"/>
-    <property name="java.version.date" value="2019-10-15"/>
+    <property name="java.version.date" value="2020-01-14"/>
     <property name="java.vendor.url.bug" value="https://youtrack.jetbrains.com"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="application.mcts.MonteCarloTreeSearchTest" name="test" time="3.055"/>
+  <testcase classname="application.mcts.MonteCarloTreeSearchTest" name="test" time="3.036"/>
 </testsuite>

@@ -3,5 +3,5 @@ C:\Users\brain\IdeaProjects\Othello\src\test\java\application\game\BoardTest.jav
 C:\Users\brain\IdeaProjects\Othello\src\test\java\application\game\OthelloVerifierTest.java
 C:\Users\brain\IdeaProjects\Othello\src\test\java\application\mcts\MonteCarloTreeSearchTest.java
 C:\Users\brain\IdeaProjects\Othello\src\test\java\application\gui\GUITest.java
-C:\Users\brain\IdeaProjects\Othello\src\test\java\application\mcts\GenerateTrainingDataTest.java
+C:\Users\brain\IdeaProjects\Othello\src\test\java\application\mcts\GenerateNNDataTest.java
 C:\Users\brain\IdeaProjects\Othello\src\test\java\application\mcts\TreeNodeTest.java
